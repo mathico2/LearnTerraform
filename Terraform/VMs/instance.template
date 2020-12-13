@@ -1,0 +1,32 @@
+
+resource "aws_instance" "{Application}-{Purpose}-{Row}" {
+  ami               = "ami-056f139b85f494248" 
+  instance_type     = "{instance_type}"
+  count             = "{count}"
+  subnet_id         =  data.aws_subnet.{Subnet}.id
+  key_name          = var.key_name
+  availability_zone = data.aws_availability_zones.AvailabilityZones.names[{Availability Zone}]
+  security_groups   = [ data.aws_security_group.{SecurityGroup}.id ]
+  user_data         = file("../vms/instance-1.user_data")   #results in: C:\ProgramData\Amazon\EC2-Windows\Launch\Log
+
+  root_block_device {
+    volume_type           = "{rootVolumeType}"
+    volume_size           = "{rootVolumeSize}" 
+    delete_on_termination = true
+    # encrypted = false
+    # kms_key_id = false
+  }
+
+  tags = {
+    Environment       = var.Environment
+    Environment-Short = var.Environment-Short
+    Owner             = "{Owner}"
+    Purpose           = "{Purpose}"
+    Application       = "{Application}"
+    Description       = "{Description}"
+   #Name              = "{Owner}{Region}{Network}{Environment-Short}{Purpose}${format("%02d", count.index + {Base-Increment})}" #update increment to create machines 4-6
+    Name              = "{Owner}{Region}${var.Network}${var.Environment-Short}{Purpose}${format("%02d", count.index + 4)}" # update increment to create machines 4-6
+
+  }
+}
+ 

@@ -1,0 +1,4 @@
+<powershell>
+Get-Disk
+Get-PSDrive
+</powershell>
